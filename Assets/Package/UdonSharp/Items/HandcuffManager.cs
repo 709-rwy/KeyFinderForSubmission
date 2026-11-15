@@ -86,7 +86,7 @@ public class HandcuffManager : UdonSharpBehaviour
 
             if (playerCol == null) continue;
             if (playerCol.transform == null) continue;
-            if (playerCol.GetTarget() == Networking.LocalPlayer) continue;
+            if (playerCol.GetTargetID() == Networking.LocalPlayer.playerId) continue;
       
             return playerCol;
         }
@@ -101,7 +101,7 @@ public class HandcuffManager : UdonSharpBehaviour
         (
             playerCol != null &&
             playerCol.transform != null &&
-            playerCol.GetTarget().playerId != Networking.LocalPlayer.playerId
+            playerCol.GetTargetID() != Networking.LocalPlayer.playerId
         );
     }
     

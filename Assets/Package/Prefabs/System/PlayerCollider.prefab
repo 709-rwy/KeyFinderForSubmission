@@ -165,6 +165,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8970574226478044520}
   cliantPlayer: {fileID: 0}
   fieldGenerator: {fileID: 0}
+  Entity: {fileID: 4769932652139919824}
 --- !u!114 &8970574226478044520
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -93,7 +93,7 @@ public class InputManager : UdonSharpBehaviour
         );
     }
     
-    //Raycast(),SelectFromHIts()はHandcuffManagerにも同名のメソッドがあるが、
+    //Raycast(),SelectFromHIts()はHandcuffManager,KeyManagerにも同名のメソッドがあるが、
     //これは判定するオブジェクトがもつ型のみが変わっている
     //本来ジェネリクス型を使うつもりだったがジェネリクス型の自作ができなかったので同名メソッドを作成することになった
     private PlayerColliders Raycast()
@@ -115,7 +115,7 @@ public class InputManager : UdonSharpBehaviour
 
             PlayerColliders playerCol = col.GetComponent<PlayerColliders>();
             if (playerCol == null) continue;
-            if (playerCol.GetTarget().playerId == Networking.LocalPlayer.playerId) continue;
+            if (playerCol.GetTargetID() == Networking.LocalPlayer.playerId) continue;
 
             return playerCol;
         }

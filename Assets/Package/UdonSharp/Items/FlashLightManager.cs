@@ -31,7 +31,7 @@ public class FlashLightManager : UdonSharpBehaviour
     // ==========
     private void Update()
     {
-        if(owner != null && (!PlayerIsInVR))
+        if(owner != null && Utilities.IsValid(owner) && (!PlayerIsInVR))
         {
             TrackToCamera();
             if (owner == Networking.LocalPlayer && Input.GetKeyDown(KeyCode.F))

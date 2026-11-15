@@ -172,13 +172,13 @@ public class GameManager : UdonSharpBehaviour
     //publicなのはSendCustomNetworkEvent()でよびだすため
     public void gameFinishInternal()
     {
+        if (isLocalPlayerJoiningGame()) cliantPlaeyr.Resporn();
+
+        fieldGenerator.OnGameFinish();
+        ui.ShowUI(false);
         playerIds = null;        
         readyPlayerNum = 0;
         isGameStarted = false;
-        fieldGenerator.OnGameFinish();
-        ui.ShowUI(false);
-
-        if (isLocalPlayerJoiningGame()) cliantPlaeyr.Resporn();
     }
 
     // =======================

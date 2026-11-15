@@ -14,6 +14,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     [SerializeField] private  PlayerManager cliantPlayer;
     [SerializeField] private FieldGenerator fieldGenerator;
+    [SerializeField] private GameObject Entity;
 
     private VRCPlayerApi target;
 
@@ -26,15 +27,12 @@ public class PlayerColliders : UdonSharpBehaviour
     void Start()
     {
         GetComponent<Collider>().enabled = false;
+        Entity.SetActive(false);
     }
 
     void Update()
     {
-        if (target != null && target.IsValid())
-        {
-            Track(target);
-        }
-       
+        if (GetTargetID()!=-1) Track(target);
     }
 
     // =================
@@ -45,6 +43,7 @@ public class PlayerColliders : UdonSharpBehaviour
     {
         this.target = target;
         GetComponent<Collider>().enabled = true;
+        Entity.SetActive(true);
         Networking.SetOwner(target, gameObject);
     }
 
@@ -52,6 +51,7 @@ public class PlayerColliders : UdonSharpBehaviour
     {
         target = null;
         GetComponent<Collider>().enabled = false;
+        Entity.SetActive(false);
     }
 
     // =======================
@@ -66,7 +66,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public void ClickedByHandInternal()
     {
-        if (Networking.LocalPlayer.playerId != target.playerId) return;
+        if (Networking.LocalPlayer.playerId != GetTargetID()) return;
         Networking.SetOwner(target, gameObject);
         cliantPlayer.ClickedByHand();
     }
@@ -93,7 +93,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
-        if (Networking.LocalPlayer.playerId != target.playerId) return;
+        if (Networking.LocalPlayer.playerId != GetTargetID()) return;
         
         Networking.SetOwner(target, gameObject);
         cliantPlayer.ClickedByHandcuff(fieldGenerator.FindItemById(clickeditemId).GetComponent<HandcuffManager>()) ;
@@ -101,4 +101,7 @@ public class PlayerColliders : UdonSharpBehaviour
     }
 
     public VRCPlayerApi GetTarget() => target;
+
+    public int GetTargetID()=> (target != null && target.IsValid()) ? target.playerId : -1;
+    
 }

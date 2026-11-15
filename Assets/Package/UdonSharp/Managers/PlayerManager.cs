@@ -13,8 +13,7 @@ public class PlayerManager : UdonSharpBehaviour
     //  FIELDS
     // ========
 
-    //[SerializeField] private Transform oldMaze;
-    [SerializeField] private Transform Maze;
+
     [SerializeField] private Transform respornPoint;
 
     private Transform spawnPoint;
@@ -55,6 +54,7 @@ public class PlayerManager : UdonSharpBehaviour
     public void Resporn()
     {
         Networking.LocalPlayer.TeleportTo(respornPoint.position, respornPoint.rotation);
+        Networking.LocalPlayer.Immobilize(false);
     }
 
 
