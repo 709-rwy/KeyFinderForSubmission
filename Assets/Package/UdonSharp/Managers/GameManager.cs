@@ -52,8 +52,6 @@ public class GameManager : UdonSharpBehaviour
         gameStartTime = 0f; 
         readyPlayerNum = 0;
 
-        Debug.Log($"[SyncTest {Networking.IsNetworkSettled}]");
-
     }
 
     //ゲーム時のタイマー処理はここ
@@ -134,7 +132,6 @@ public class GameManager : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
-        Debug.Log("受信したよ");
         if(IsPlayerIdsValid() && fieldGenerator.isReady())
         {
             SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(countReady));
