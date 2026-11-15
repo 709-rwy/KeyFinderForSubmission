@@ -72,3 +72,9 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity Asset Store packages - download separately
+/Assets/Package/Models/ShelfObjects/
+/Assets/Package/Models/ShelfObjects.meta
+/Assets/Package/Models/Furniture Mega Pack/
+/Assets/Package/Models/Furniture Mega Pack.meta
