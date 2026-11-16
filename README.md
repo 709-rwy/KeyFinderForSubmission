@@ -2,7 +2,7 @@
 
 VRChat上で暗い迷路を探索し、鍵を集めて脱出するマルチプレイヤー向けミニゲームです。グループ制作の中で、ゲーム進行、アイテム、参加者間の同期、迷路生成ツールを含む、Key Finderのプログラム全体をUnityとUdonSharpで実装しました。このリポジトリは、担当したミニゲームを応募用に単独のワールドとしてまとめたものです。
 
-作品概要、遊び方、実装は、このREADMEと[主要な自作スクリプト](#主な自作スクリプト)から、GitHubへのログインやUnityのセットアップなしでご確認いただけます。VRChat固有の `Interact`、Pickupのイベント、Owner、`[UdonSynced]`、Network Eventなどを含む詳しい処理の流れは、[VRChat/UdonSharp実装ガイド](docs/VRCHAT_IMPLEMENTATION_GUIDE.md)にまとめています。
+作品概要、遊び方、実装は、このREADMEと[主要な自作スクリプト](#主な自作スクリプト)から、GitHubへのログインやUnityのセットアップなしでご確認いただけます。VRChat固有の `Interact`、Pickupのイベント、Owner、`[UdonSynced]`、Network Eventなどを含む詳しい処理の流れは、[VRChat/UdonSharp実装ガイド](docs/VRCHAT_IMPLEMENTATION_GUIDE.md)にまとめています。ファイルの所在と、`Assets/Package` という名称の由来は、[Assetsディレクトリ構成](docs/ASSETS_DIRECTORY_STRUCTURE.md)で説明しています。
 
 ## 元のゲーム企画とKey Finderの位置づけ
 
@@ -75,7 +75,20 @@ Key Finderでは、クリアを目指す側は鍵を探して出口に運びま�
 - VRChat Worlds SDK `3.10.2`
 - UdonSharp
 
-### プロジェクトを開く手順
+### VRChat/VCCへログインできない場合の確認方法
+
+VCCを使った環境構築は、VRChatアカウントへログインできる閲覧者向けです。VRChatへログインできない場合は、VCCの導入やUnityでのプロジェクト起動を行う必要はありません。次の順番で、ブラウザーまたはテキストエディターから内容を確認できます。
+
+1. このREADMEの[ゲーム内容](#ゲーム内容)と[実装上の要点](#実装上の要点)で、企画と主要機能を確認します。
+2. [VRChat/UdonSharp実装ガイド](docs/VRCHAT_IMPLEMENTATION_GUIDE.md)で、`Interact`、Pickup、Owner、同期変数、Network Eventと、ゲーム開始から終了までの呼び出し順を確認します。
+3. [Assetsディレクトリ構成](docs/ASSETS_DIRECTORY_STRUCTURE.md)で、自作コード、Prefab、シーン、生成物、外部素材の位置を確認します。
+4. [主要な自作スクリプト](#主な自作スクリプト)のリンクから、実際のC#コードを確認します。シーン設定は [VRCDefaultWorldScene.unity](Assets/Scenes/VRCDefaultWorldScene.unity)、ゲーム設定値と主要オブジェクトの参照は [KeyFinderObj.prefab](Assets/Package/KeyFinderObj.prefab) のテキストからも確認できます。
+
+この確認方法ではワールドを実際に操作することはできませんが、ゲーム仕様、コード上の役割分担、VRChat固有イベント、同期設計、シーンとPrefabの構成を確認できます。別途必要なAsset Store素材もリポジトリには含めていないため、プログラムの審査・確認だけであれば文書とソースコードの閲覧を推奨します。
+
+### VCCを利用してプロジェクトを開く手順
+
+以下は、VRChatアカウントへログインでき、VCCを利用して実行環境を再現する場合の手順です。プロジェクト内容の確認だけを目的とする場合は、上記の文書・ソースコードによる確認で代替できます。
 
 1. このリポジトリをクローンまたはダウンロードします。
 2. VCCで `Add Existing Project` を選び、`Assets`、`Packages`、`ProjectSettings` があるプロジェクトのルートフォルダーを指定します。
@@ -97,6 +110,8 @@ Key Finderでは、クリアを目指す側は鍵を探して出口に運びま�
 
 ### 主なファイル構成
 
+`Assets/Package` はUnity Package Managerのパッケージではありません。元のプロジェクトからKey FinderをUnityPackageで共有するために作られたディレクトリ名を、提出用プロジェクトでも維持したものです。詳しい内訳は[Assetsディレクトリ構成](docs/ASSETS_DIRECTORY_STRUCTURE.md)を参照してください。
+
 | ファイル・フォルダー | 役割 |
 | --- | --- |
 | [Assets/Scenes/VRCDefaultWorldScene.unity](Assets/Scenes/VRCDefaultWorldScene.unity) | メインシーン |
@@ -104,5 +119,6 @@ Key Finderでは、クリアを目指す側は鍵を探して出口に運びま�
 | [Assets/Package/UdonSharp/](Assets/Package/UdonSharp/) | ゲーム中に使用する配置・アイテム・進行管理のスクリプト |
 | [Assets/UdonSharp/MazeGenerator/](Assets/UdonSharp/MazeGenerator/) | Unity Editor上で使用する迷路生成処理 |
 | [docs/VRCHAT_IMPLEMENTATION_GUIDE.md](docs/VRCHAT_IMPLEMENTATION_GUIDE.md) | VRChat固有イベント、Owner、変数同期、Network Eventとゲーム全体の呼び出し順の解説 |
+| [docs/ASSETS_DIRECTORY_STRUCTURE.md](docs/ASSETS_DIRECTORY_STRUCTURE.md) | `Assets` 内の自作コード、Prefab、シーン、生成物、外部素材の配置と `Assets/Package` の由来 |
 
 `Library`、`Temp`、`Logs` などはUnityが生成するため、初回起動時には再生成に時間がかかる場合があります。UnityやSDKのバージョンが異なると、素材の再インポートやUdonSharpの再コンパイルが発生する場合があります。

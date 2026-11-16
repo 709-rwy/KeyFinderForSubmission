@@ -2,7 +2,7 @@
 
 この文書は、VRChatへログインしたりワールドへ入ったりしなくても、Key Finderの実装をソースコードから追えるようにするための解説です。特に、通常のUnityだけでは登場しない `Interact`、Pickup関連イベント、`Networking.LocalPlayer`、Owner、`[UdonSynced]`、`RequestSerialization()`、Network Eventの役割を、実際のゲーム進行に沿って説明します。
 
-ゲーム企画、遊び方、開発環境、シーンの開き方は[README](../README.md)を参照してください。
+ゲーム企画、遊び方、開発環境、シーンの開き方は[README](../README.md)、自作コード・Prefab・生成物・外部素材の配置は[Assetsディレクトリ構成](ASSETS_DIRECTORY_STRUCTURE.md)を参照してください。
 
 ## 1. 全体像
 
@@ -309,9 +309,9 @@ ON/OFFは `TurnOn()` または `TurnOff()` をAllへのNetwork Eventで呼び、
 
 ## 9. VRChatログインなしで確認できる範囲
 
-GitHub上でREADME、この文書、リンク先のC#コードとUnityのシーンYAMLを読むだけで、設計と呼び出し順は確認できます。Unityプロジェクトを開ける環境であれば、VRChatアカウントへログインせずに、Hierarchy、Inspector、Prefab参照、シーン上の設定も確認できます。
+GitHub上でREADME、この文書、[Assetsディレクトリ構成](ASSETS_DIRECTORY_STRUCTURE.md)、リンク先のC#コードとUnityのシーンYAMLを読むだけで、設計と呼び出し順は確認できます。VRChatやVCCへログインできない場合は、この文書確認を正式な代替経路とし、Unityプロジェクトを開く必要はありません。
 
-ClientSimを使用すると、Interact、Pickup、ローカルプレイヤーの移動などをUnity Editor内で試せます。ただし、複数の実クライアント間でのOwner移譲、通信遅延、同時操作、途中参加を含むネットワーク挙動は、ソース確認または複数クライアントでの検証が必要です。
+VCCと必要なSDKパッケージを利用できる環境では、ClientSimによってInteract、Pickup、ローカルプレイヤーの移動などをUnity Editor内で試せます。ただし、複数の実クライアント間でのOwner移譲、通信遅延、同時操作、途中参加を含むネットワーク挙動は、ソース確認または複数クライアントでの検証が必要です。
 
 ## 10. 実装を読む際の注意点
 
