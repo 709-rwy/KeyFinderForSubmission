@@ -7,7 +7,7 @@ using VRC.Udon;
 using System;
 using VRC.Udon.Common.Interfaces;
 
-//文字どうりゲーム進行を行うクラス
+//文字どおりゲーム進行を行うクラス
 //参加者のidをまとめてそれぞれに開始時、終了時に必要な処理を呼び出したり、
 //ゲーム内のタイマーを管理したりする
 public class GameManager : UdonSharpBehaviour
@@ -23,20 +23,21 @@ public class GameManager : UdonSharpBehaviour
     [SerializeField] private UIManager ui;
     
 
-    [SerializeField] private int maxPlayerNum;
-    [SerializeField] private int keyNum;
-    [SerializeField] private int handcuffNum;
-    [SerializeField] private int lockNum;
-    [SerializeField] private int timerMaxSecond;
+    [SerializeField] private int maxPlayerNum; //1回のゲームに参加できる最大人数
+    [SerializeField] private int keyNum; //フィールドに配置する鍵の数
+    [SerializeField] private int handcuffNum; //フィールドに配置する手錠の数
+    [SerializeField] private int lockNum; //クリアに必要な鍵の数
+    [SerializeField] private int timerMaxSecond; //制限時間（秒）
 
 
+    //GameManagerのOwnerがゲーム開始時に設定し、参加プレイヤーのIDを全クライアントへ同期する
     [UdonSynced] private int[] playerIds;
     private int readyPlayerNum;
 
 
 
-    private float gameStartTime;
-    private float gameTimer;
+    private float gameStartTime; //Networking.GetServerTimeInSeconds()を使ったゲーム開始時刻（秒）
+    private float gameTimer; //各クライアントで計算する残り時間（秒）
     private bool isGameStarted;
 
 
@@ -84,7 +85,7 @@ public class GameManager : UdonSharpBehaviour
     public void GameStart()
     {
         //FieldGeneratorのitemSpawnPointsIdx,playerSpawnPointsIdxの設定をさせるメソッド
-        //内部的にはFieldGeneratorのOwnerのみで呼べばいいが、GameMangerとFieldGeneratorのOwnerがちがってもいいように全クライアントでよんでいる
+        //内部的にはFieldGeneratorのOwnerのみで呼べばいいが、GameManagerとFieldGeneratorのOwnerが違ってもいいように全クライアントで呼んでいる
         fieldGenerator.setIdxs();
 
         //ここからはこのオブジェクトのオーナーのみの処理
@@ -112,7 +113,8 @@ public class GameManager : UdonSharpBehaviour
         }
     }
 
-    //publicなのはSendCustomNetworkEvent()でよびだすため
+    //SendCustomNetworkEvent()で呼び出すためpublic
+    //NetworkEventTarget.Allで各クライアントに届くが、ゲーム参加者だけがフィールド生成、UI表示、テレポートを行う
     public void GameStartInternal()
     {
         if (!isLocalPlayerJoiningGame()) return;
@@ -139,8 +141,8 @@ public class GameManager : UdonSharpBehaviour
     }
 
     //オーナーが準備が完了したクライアントを数えるためのメソッド
-    //性格には数えるのは通知回数だが、通常ではそれぞれのクライアントで1回づつ呼ばれるようになっている
-    //GameManagerとFieldgeneratorのOnDeserialization()及び、
+    //正確には数えるのは通知回数だが、通常ではそれぞれのクライアントで1回ずつ呼ばれるようになっている
+    //GameManagerとFieldGeneratorのOnDeserialization()及び、
     //それぞれのOwnerの場合GameManager.GameStart(),FieldGenerator.setIdxs()から呼ばれる可能性がある
     public void countReady()
     {
@@ -166,7 +168,8 @@ public class GameManager : UdonSharpBehaviour
         SendCustomNetworkEvent(NetworkEventTarget.All, nameof(gameFinishInternal));
     }
 
-    //publicなのはSendCustomNetworkEvent()でよびだすため
+    //SendCustomNetworkEvent()で呼び出すためpublic
+    //NetworkEventTarget.Allで各クライアントに届き、参加者のリスポーンとフィールド、UI、参加者情報のリセットを行う
     public void gameFinishInternal()
     {
         if (isLocalPlayerJoiningGame()) cliantPlaeyr.Resporn();
@@ -182,7 +185,7 @@ public class GameManager : UdonSharpBehaviour
     //  METHODS GETTING DATAS
     // =======================
 
-    //FieldGenerator.OnDeserialization()からもよびだすためpublic
+    //FieldGenerator.OnDeserialization()からも呼び出すためpublic
     public bool IsPlayerIdsValid()
     {
         if (playerIds == null) return false;

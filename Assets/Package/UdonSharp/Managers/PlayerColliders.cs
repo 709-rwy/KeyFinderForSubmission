@@ -18,6 +18,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     private VRCPlayerApi target;
 
+    //UdonSyncedではItem参照を直接同期できないため、FieldGeneratorが割り当てたitemIdを同期する
     [UdonSynced] private int clickeditemId;
 
     // ===================
@@ -41,6 +42,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public void RegisterTarget(VRCPlayerApi target)
     {
+        //追従対象を登録し、このオブジェクトのOwnerも対象プレイヤーに設定する
         this.target = target;
         GetComponent<Collider>().enabled = true;
         Entity.SetActive(true);
@@ -66,6 +68,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public void ClickedByHandInternal()
     {
+        //NetworkEventTarget.Allで呼ばれるが、追従対象のローカルプレイヤーだけが処理する
         if (Networking.LocalPlayer.playerId != GetTargetID()) return;
         Networking.SetOwner(target, gameObject);
         cliantPlayer.ClickedByHand();
@@ -73,6 +76,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public void ClickedByHandcuff(HandcuffManager handcuff)
     {
+        //対象クライアントが同じ手錠を取得できるよう、参照の代わりにitemIdを同期する
         Networking.SetOwner(Networking.LocalPlayer, gameObject);
         clickeditemId = handcuff.GetComponent<Item>().itemId;
         RequestSerialization();
@@ -93,6 +97,7 @@ public class PlayerColliders : UdonSharpBehaviour
 
     public override void OnDeserialization()
     {
+        //同期されたitemIdから手錠を取得し、追従対象のローカルプレイヤーだけに拘束を適用する
         if (Networking.LocalPlayer.playerId != GetTargetID()) return;
         
         Networking.SetOwner(target, gameObject);

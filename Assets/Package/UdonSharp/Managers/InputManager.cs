@@ -43,6 +43,8 @@ public class InputManager : UdonSharpBehaviour
     // =======================
     //  INTERACTIONAL METHODS
     // =======================
+    //Desktopで右手にアイテムを持っていない場合は視線方向を優先し、それ以外は入力した手の周囲から対象プレイヤーを探す
+    //判定に使う手がアイテムを持っている場合は素手の操作を行わない
     public override void InputUse(bool value, UdonInputEventArgs args)
     {
         if (!value) return;
@@ -89,11 +91,11 @@ public class InputManager : UdonSharpBehaviour
         return 
         (
             playerCol != null && 
-            playerCol.GetTarget().playerId != Networking.LocalPlayer.playerId
+            playerCol.GetTargetID() != Networking.LocalPlayer.playerId
         );
     }
     
-    //Raycast(),SelectFromHIts()はHandcuffManager,KeyManagerにも同名のメソッドがあるが、
+    //Raycast(),SelectFromHits()はHandcuffManager,KeyManagerにも同名のメソッドがあるが、
     //これは判定するオブジェクトがもつ型のみが変わっている
     //本来ジェネリクス型を使うつもりだったがジェネリクス型の自作ができなかったので同名メソッドを作成することになった
     private PlayerColliders Raycast()

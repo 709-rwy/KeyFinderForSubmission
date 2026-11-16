@@ -7,6 +7,7 @@ using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
 
 [RequireComponent(typeof(Item))]
+//鍵を使用した位置の近くにあるDoorManagerを探し、扉へ鍵の使用を通知する
 public class KeyManager : UdonSharpBehaviour
 {
 
@@ -20,6 +21,7 @@ public class KeyManager : UdonSharpBehaviour
     
     public void Use()
     {
+        //Desktopでは視線方向のRaycastを優先し、VRでは鍵の周囲から扉を探す
         DoorManager door;
         bool isDoorFound = false;
 

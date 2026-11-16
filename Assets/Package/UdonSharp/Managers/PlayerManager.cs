@@ -13,9 +13,10 @@ public class PlayerManager : UdonSharpBehaviour
     //  FIELDS
     // ========
 
-
+    //ゲーム終了時に戻る地点
     [SerializeField] private Transform respornPoint;
 
+    //ゲーム開始時にローカルプレイヤーへ割り当てられるスポーン地点
     private Transform spawnPoint;
 
     private bool isPlayerFreezing;
@@ -48,6 +49,7 @@ public class PlayerManager : UdonSharpBehaviour
 
     public void TeleportToSpawnPoint()
     {
+        //この処理を実行しているローカルプレイヤーだけを移動する
         Networking.LocalPlayer.TeleportTo(spawnPoint.position, spawnPoint.rotation);
     }
 

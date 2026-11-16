@@ -33,7 +33,7 @@ public class OldMazeGenerator : MonoBehaviour
     Transform roomCenters;
 
     bool[,] visitedMap;
-    //部屋が存在しないため、壁を縦向き/横向きのもので分けて、それぞれについて生成済歌を管理している
+    //部屋が存在しないため、壁を縦向き/横向きのもので分けて、それぞれについて生成済みかを管理している
     bool[,] XAxisDirectionWallMap;
     bool[,] ZAxisDirectionWallMap;
 

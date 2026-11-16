@@ -23,15 +23,17 @@ public class FieldGenerator : UdonSharpBehaviour
     [SerializeField] private PlayerManager cliantPlayer;
 
     private ItemSpawnPoint[] itemSpawnPoints;
+    //Ownerが生成したスポーンポイントのシャッフル順を全クライアントで共有する
     [UdonSynced] private int[] itemSpawnPointsIdx;
 
     private PlayerSpawnPoint[] playerSpawnPoints;
+    //Ownerが生成したプレイヤースポーンポイントのシャッフル順を全クライアントで共有する
     [UdonSynced] private int[] playerSpawnPointsIdx;
 
     private PlayerColliders[] PlayerColliders;
 
     //それぞれのアイテムを継承させなかったうえで、管理用のクラスを作らなかったからアイテムの種類別でフィールドを持つ必要がある
-    //当時vrc環境で継承が使えないと考えていたためこのような形になった
+    //当時VRC環境で継承が使えないと考えていたためこのような形になった
     private KeyManager[] keys;
     private HandcuffManager[] handcuffs;
     private FlashLightManager[] flashLights;
@@ -40,6 +42,7 @@ public class FieldGenerator : UdonSharpBehaviour
     //FlashLightのみ「プレイヤーの目の前に出現する」という湧き方をするのでそれに対応するための変数が必要で、
     //それを入れる適切な位置がここしかなかったためここに入れた
     //しかし特別な処理を一つ許したら際限なくなるからできる限り避けるべき
+    //プレイヤーのスポーン地点を基準にしたライトの出現位置のオフセット（Unity単位）
     private Vector3 flashLightSpawnPivot = new Vector3(0, 1, 0.1f);
 
 
@@ -113,6 +116,8 @@ public class FieldGenerator : UdonSharpBehaviour
     //プレイヤーの当たり判定がプレイヤーを追従するようにプレイヤーと当たり判定との登録を行うメソッド
     //引数にkeyNumとhandcuffNumを入れてることについても、これが一つのミニゲーム用のメソッドだからよかったものの
     //複数のミニゲームに対応させようとしたらアイテムの種類だけ引数と内部で繰り返しの処理が必要になるため要改善
+    //playerIdsの人数分のスポーンポイント、PlayerColliders、ライトが必要
+    //また、keyNum個の鍵、handcuffNum個の手錠と、それらの合計数以上のアイテムスポーンポイントが必要
     public void FieldGenerate(int[] playerIds, int keyNum, int handcuffNum)
     {
 
@@ -127,7 +132,7 @@ public class FieldGenerator : UdonSharpBehaviour
         }
         cliantPlayer.RegisterSpawnPoint(playerIds, playerSpawnPoints);
 
-        //keys
+        //keys（itemIdは0からkeyNum - 1）
         for (int i = 0; i < keyNum; i++)
         {
             item = keys[i].GetComponent<Item>();
@@ -135,7 +140,7 @@ public class FieldGenerator : UdonSharpBehaviour
             item.itemId = i; ;
         }
 
-        //handcuffs
+        //handcuffs（itemIdはkeyNumからkeyNum + handcuffNum - 1）
         for(int i = 0;i < handcuffNum; i++)
         {
             item = handcuffs[i].GetComponent<Item>();
@@ -143,7 +148,7 @@ public class FieldGenerator : UdonSharpBehaviour
             item.itemId = i + keyNum;
         }
 
-        //flashlights
+        //flashlights（itemIdはkeyNum + handcuffNum以降）
         for(int i = 0; i < playerIds.Length; i++)
         {
             item = flashLights[i].GetComponent<Item>();
@@ -203,6 +208,7 @@ public class FieldGenerator : UdonSharpBehaviour
 
     //ゲーム終了時にアイテムを隠したり、当たり判定の追従を終了するためのメソッド
     //このメソッドについてもそれぞれのアイテムが別管理のため少し長くなっている
+    //同期したスポーン順もnullに戻し、次のゲーム開始時にsetIdxs()で再設定できる状態にする
     public void OnGameFinish()
     {
         itemSpawnPointsIdx = null;

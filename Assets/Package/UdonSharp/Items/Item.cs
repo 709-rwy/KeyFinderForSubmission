@@ -24,6 +24,7 @@ public class Item : UdonSharpBehaviour
     //それぞれの親クラスがないため型をUdonSharpBehaviourにするしかなかった
     private UdonSharpBehaviour eachItemManager;
 
+    //FieldGeneratorがゲーム開始時に割り当て、同期時に同じItemを特定するために使用する
     public int itemId;
 
 

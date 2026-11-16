@@ -15,7 +15,7 @@ public class FlashLightManager : UdonSharpBehaviour
     // ========
 
     //基本イベントで状態がゲームに参加している全クライアントで同じになっているようになっているはずだが
-    //保健として[UdonSynced]をつけた
+    //保険として[UdonSynced]をつけた
     [UdonSynced] private bool isOn;
 
     private VRCPlayerApi owner;
@@ -75,7 +75,8 @@ public class FlashLightManager : UdonSharpBehaviour
     //  SETTING METHODS
     // =================
 
-    //ほぼdesktopプレイヤーのためのメソッド
+    //ほぼDesktopプレイヤーのためのメソッド
+    //登録したプレイヤーをOwnerにし、Desktopではカメラ追従、VRではPickupとして使用する
     public void RegisterPlayer(VRCPlayerApi player)
     {
         Networking.SetOwner(player, gameObject);

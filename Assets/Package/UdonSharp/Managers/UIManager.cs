@@ -16,6 +16,7 @@ public class UIManager : UdonSharpBehaviour
     [SerializeField] private TextMeshProUGUI timer;
     [SerializeField] private TextMeshProUGUI keycounter;
 
+    //プレイヤーの頭を基準にしたUIの表示位置のオフセット（Unity単位）
     [SerializeField] private Vector3 trackPosition;
 
     private bool isPlayerINVR;

@@ -13,6 +13,7 @@ public class HandcuffManager : UdonSharpBehaviour
     // ========
 
     private Item item;
+    //対象プレイヤーの当たり判定を基準にした手錠の再出現位置のオフセット（Unity単位）
     [SerializeField] private Vector3 respornOffset = Vector3.forward * 0.05f;
 
     // =========
@@ -33,6 +34,7 @@ public class HandcuffManager : UdonSharpBehaviour
         PlayerColliders playerCol;
 
         //プレイヤーの当たり判定を拾う処理の本体部分
+        //VRでは手錠の周囲、Desktopでは視線方向のRaycastを優先して対象を探す
         if (Networking.LocalPlayer.IsUserInVR())
         {
             Collider[] hits = Physics.OverlapSphere(transform.position, 1);
