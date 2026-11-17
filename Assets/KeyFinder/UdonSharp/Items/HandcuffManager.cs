@@ -2,9 +2,11 @@
 using System.Runtime.Remoting.Messaging;
 using UdonSharp;
 using UnityEngine;
+using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Common;
+using VRC.Udon.Common.Interfaces;
 
 public class HandcuffManager : UdonSharpBehaviour
 {
@@ -14,7 +16,7 @@ public class HandcuffManager : UdonSharpBehaviour
 
     private Item item;
     //対象プレイヤーの当たり判定を基準にした手錠の再出現位置のオフセット（Unity単位）
-    [SerializeField] private Vector3 respornOffset = Vector3.forward * 0.05f;
+    [SerializeField] private Vector3 respornOffset = new Vector3(0,0.5f,1);
 
     // =========
     //  Start()
@@ -54,10 +56,7 @@ public class HandcuffManager : UdonSharpBehaviour
 
         if (CheckPlayerCollider(playerCol))
         {
-            //ここは本来は拘束状態を解除したときに拘束されていたプレイヤーの目の前に湧くようにするはずなのだが何故か位置が変わっていない
-            transform.position = playerCol.transform.position + (playerCol.transform.rotation * respornOffset);
-            transform.rotation = playerCol.transform.rotation;
-
+            GetComponent<VRCPickup>().Drop();
             playerCol.ClickedByHandcuff(this);
         }
 
@@ -105,6 +104,18 @@ public class HandcuffManager : UdonSharpBehaviour
             playerCol.transform != null &&
             playerCol.GetTargetID() != Networking.LocalPlayer.playerId
         );
+    }
+
+    //拘束状態から解放したときに目の前に手錠がスポーンするためのメソッド、
+    //やたらカクカクしてみえるが動作上の問題はなかった
+    public void respornFrontOf(Vector3 targetPos, Quaternion targetRot)
+    {
+        Networking.SetOwner(Networking.LocalPlayer, gameObject);
+
+        transform.position = targetPos + (targetRot * respornOffset);
+        transform.rotation = targetRot;
+
+        item.SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Item.Show));
     }
     
 }

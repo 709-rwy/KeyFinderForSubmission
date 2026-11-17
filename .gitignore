@@ -74,7 +74,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Unity Asset Store packages - download separately
-/Assets/Package/Models/ShelfObjects/
-/Assets/Package/Models/ShelfObjects.meta
-/Assets/Package/Models/Furniture Mega Pack/
-/Assets/Package/Models/Furniture Mega Pack.meta
+/Assets/KeyFinder/Models/ShelfObjects/
+/Assets/KeyFinder/Models/ShelfObjects.meta
+/Assets/KeyFinder/Models/Furniture Mega Pack/
+/Assets/KeyFinder/Models/Furniture Mega Pack.meta

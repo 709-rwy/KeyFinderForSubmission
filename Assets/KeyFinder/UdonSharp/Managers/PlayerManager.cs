@@ -67,7 +67,9 @@ public class PlayerManager : UdonSharpBehaviour
     public void ClickedByHand()
     {
         if (!isPlayerFreezing) return;
-        clickedHandcuff.GetComponent<Item>().SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Item.Show));
+
+        VRCPlayerApi.TrackingData targetData = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head);
+        clickedHandcuff.respornFrontOf(targetData.position, targetData.rotation);
         
         isPlayerFreezing = false;
         Networking.LocalPlayer.Immobilize(false);
