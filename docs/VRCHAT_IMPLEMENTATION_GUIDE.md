@@ -12,9 +12,9 @@ Key Finderは、各参加者のPCで同じUdonプログラムを動かしなが�
 
 | 層 | 主な役割 | 主なスクリプト |
 | --- | --- | --- |
-| ゲーム進行 | 参加者の決定、準備完了の集計、開始、タイマー、終了 | [`GameManager.cs`](../Assets/Package/UdonSharp/Managers/GameManager.cs) |
-| 共有フィールド | 配置順の共有、アイテム配置、プレイヤー用当たり判定、扉の状態 | [`FieldGenerator.cs`](../Assets/Package/UdonSharp/Fields/FieldGenerator.cs)、[`DoorManager.cs`](../Assets/Package/UdonSharp/Managers/DoorManager.cs)、[`PlayerColliders.cs`](../Assets/Package/UdonSharp/Managers/PlayerColliders.cs) |
-| 各プレイヤーの操作 | Pickup、Use入力、対象検出、テレポート、拘束、UI | [`Item.cs`](../Assets/Package/UdonSharp/Items/Item.cs)、[`InputManager.cs`](../Assets/Package/UdonSharp/Managers/InputManager.cs)、[`PlayerManager.cs`](../Assets/Package/UdonSharp/Managers/PlayerManager.cs)、[`UIManager.cs`](../Assets/Package/UdonSharp/Managers/UIManager.cs) |
+| ゲーム進行 | 参加者の決定、準備完了の集計、開始、タイマー、終了 | [`GameManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/GameManager.cs) |
+| 共有フィールド | 配置順の共有、アイテム配置、プレイヤー用当たり判定、扉の状態 | [`FieldGenerator.cs`](../Assets/KeyFinder/UdonSharp/Fields/FieldGenerator.cs)、[`DoorManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/DoorManager.cs)、[`PlayerColliders.cs`](../Assets/KeyFinder/UdonSharp/Managers/PlayerColliders.cs) |
+| 各プレイヤーの操作 | Pickup、Use入力、対象検出、テレポート、拘束、UI | [`Item.cs`](../Assets/KeyFinder/UdonSharp/Items/Item.cs)、[`InputManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/InputManager.cs)、[`PlayerManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/PlayerManager.cs)、[`UIManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/UIManager.cs) |
 
 ゲーム開始時に、アイテムやプレイヤーの配置結果そのものを1個ずつ送るのではなく、スポーン地点を並べ替えた**インデックス配列**を同期します。各クライアントは同じ配列を使って同じ配置を再現します。
 
@@ -64,8 +64,8 @@ UdonSharpではC#風のコードを記述しますが、最終的にはVRChat上
 このプロジェクトでは、似た名前の操作が別の経路を通ります。
 
 - **Interact**: ワールドに置かれた操作可能オブジェクトへの操作です。`GameStartSwitch` の [`Switch.Interact()`](../Assets/UdonSharp/Switch.cs) が該当します。
-- **Pickup Use**: 手に持った `VRC_Pickup` への使用操作です。[`Item.OnPickupUseDown()`](../Assets/Package/UdonSharp/Items/Item.cs) から、鍵・手錠・懐中電灯の各 `Use()` へ振り分けます。
-- **Input Use**: VRChatのUse入力そのものを受け取るイベントです。[`InputManager.InputUse()`](../Assets/Package/UdonSharp/Managers/InputManager.cs) が、アイテムを持っていない手による救助に使用します。
+- **Pickup Use**: 手に持った `VRC_Pickup` への使用操作です。[`Item.OnPickupUseDown()`](../Assets/KeyFinder/UdonSharp/Items/Item.cs) から、鍵・手錠・懐中電灯の各 `Use()` へ振り分けます。
+- **Input Use**: VRChatのUse入力そのものを受け取るイベントです。[`InputManager.InputUse()`](../Assets/KeyFinder/UdonSharp/Managers/InputManager.cs) が、アイテムを持っていない手による救助に使用します。
 
 つまり、ソース中の `Use()` はVRChatが直接探して呼ぶ組み込みイベントではなく、このプロジェクトが各アイテムの処理を揃えるために付けた通常のpublicメソッドです。
 
@@ -140,7 +140,7 @@ OnDeserialization()
 - `VRC_Pickup` は、プレイヤーがオブジェクトを持つ操作と、`OnPickup()`、`OnDrop()`、`OnPickupUseDown()` などのUdonイベントを提供します。
 - `VRCObjectSync` は、Owner側のTransformやRigidbodyの動きをほかのクライアントへ同期します。Pickupを持ったときの位置・回転の共有は、独自の `[UdonSynced]` 座標配列ではなく、このSDKコンポーネントが担当します。
 
-対象Prefabは [`key.prefab`](../Assets/Package/Prefabs/Items/key.prefab)、[`handcuff.prefab`](../Assets/Package/Prefabs/Items/handcuff.prefab)、[`flashlight.prefab`](../Assets/Package/Prefabs/Items/flashlight.prefab) です。一方、ゲーム開始直後の初期配置は、同期済みインデックスを使って各クライアントの `Item.Spawn()` が同じ位置を再現します。つまり、**初期配置の決定**と**プレイ中の物理的な移動**では同期の担当が異なります。
+対象Prefabは [`key.prefab`](../Assets/KeyFinder/Prefabs/Items/key.prefab)、[`handcuff.prefab`](../Assets/KeyFinder/Prefabs/Items/handcuff.prefab)、[`flashlight.prefab`](../Assets/KeyFinder/Prefabs/Items/flashlight.prefab) です。一方、ゲーム開始直後の初期配置は、同期済みインデックスを使って各クライアントの `Item.Spawn()` が同じ位置を再現します。つまり、**初期配置の決定**と**プレイ中の物理的な移動**では同期の担当が異なります。
 
 ## 4. ゲーム開始処理を順番に追う
 
@@ -196,7 +196,7 @@ OnDeserialization()
 
 ### 5.1 共通のPickup経路
 
-鍵、手錠、懐中電灯には共通して [`Item.cs`](../Assets/Package/UdonSharp/Items/Item.cs) が付いています。
+鍵、手錠、懐中電灯には共通して [`Item.cs`](../Assets/KeyFinder/UdonSharp/Items/Item.cs) が付いています。
 
 ```text
 VRC_Pickupを持つ
@@ -216,7 +216,7 @@ Pickupを離す
 
 ### 5.2 鍵
 
-[`KeyManager.Use()`](../Assets/Package/UdonSharp/Items/KeyManager.cs) は、操作環境によって扉の探し方を変えます。
+[`KeyManager.Use()`](../Assets/KeyFinder/UdonSharp/Items/KeyManager.cs) は、操作環境によって扉の探し方を変えます。
 
 - Desktop: 頭の位置から視線方向へ最大2単位のRaycast。見つからなければ頭の周囲1単位を検索。
 - VR: 持っている鍵の周囲1単位を検索。
@@ -232,37 +232,42 @@ Pickupを離す
 
 ### 5.3 手錠で拘束する
 
-[`HandcuffManager.Use()`](../Assets/Package/UdonSharp/Items/HandcuffManager.cs) も、Desktopでは視線Raycastを優先し、VRでは手錠周辺から対象の `PlayerColliders` を探します。自分自身は対象から除外します。
+[`HandcuffManager.Use()`](../Assets/KeyFinder/UdonSharp/Items/HandcuffManager.cs) も、Desktopでは視線Raycastを優先し、VRでは手錠周辺から対象の `PlayerColliders` を探します。自分自身は対象から除外します。
 
 `PlayerColliders` はVRChatプレイヤー本体のColliderを直接操作する代わりに、各参加者の頭とOriginの中間へ毎フレーム追従する、ゲーム独自の当たり判定です。
 
 対象が見つかった後の処理は次のとおりです。
 
-1. 操作者が対象の `PlayerColliders` のOwnerを取得する。
-2. 使用した手錠の `itemId` を `clickeditemId` に入れる。
-3. `RequestSerialization()` で対象の追従Colliderから全員へIDを送る。
-4. `OnDeserialization()` は全クライアントで起こるが、追従対象本人のクライアントだけが先へ進む。
-5. 同期されたIDから同じ手錠を検索し、本人の `PlayerManager.ClickedByHandcuff()` を呼ぶ。
-6. 手錠をAllへのNetwork Eventで非表示にし、本人が `Networking.LocalPlayer.Immobilize(true)` を実行する。
+1. 操作者が手錠のOwnerになり、`VRC_Pickup.Drop()` で手錠を手から離す。
+2. 操作者が対象の `PlayerColliders` のOwnerを取得する。
+3. 使用した手錠の `itemId` を `clickeditemId` に入れる。
+4. `RequestSerialization()` で対象の追従Colliderから全員へIDを送る。
+5. `OnDeserialization()` は全クライアントで起こるが、追従対象本人のクライアントだけが先へ進む。
+6. 同期されたIDから同じ手錠を検索し、本人の `PlayerManager.ClickedByHandcuff()` を呼ぶ。
+7. 手錠をAllへのNetwork Eventで非表示にし、本人が `Networking.LocalPlayer.Immobilize(true)` を実行する。
 
 `Immobilize` を対象本人に実行させるため、他人のクライアントからプレイヤー移動を直接止める構成にはなっていません。
 
 ### 5.4 素手で拘束を解除する
 
-[`InputManager.InputUse()`](../Assets/Package/UdonSharp/Managers/InputManager.cs) はUse入力が押された瞬間を受け取ります。
+[`InputManager.InputUse()`](../Assets/KeyFinder/UdonSharp/Managers/InputManager.cs) はUse入力が押された瞬間を受け取ります。
 
 - Desktop: 右手にアイテムがなければ、視線Raycastを優先して対象を探す。
 - VR: 入力された側の手にアイテムがなければ、その手の位置周辺から対象を探す。
 
 対象の `PlayerColliders.ClickedByHand()` は `ClickedByHandInternal()` をAllへ送ります。全クライアントでメソッドは呼ばれますが、対象本人だけがID判定を通過し、次を実行します。
 
-1. 使用済み手錠をAllへのNetwork Eventで再表示する。
-2. ローカルの拘束状態を解除する。
-3. `Networking.LocalPlayer.Immobilize(false)` を実行する。
+1. 対象本人の頭のトラッキング位置と向きを取得する。
+2. `HandcuffManager.respornFrontOf()` で手錠のOwnerを対象本人へ移し、頭の前方へ再配置する。
+3. 手錠の `Item.Show()` をAllへのNetwork Eventで呼び、全クライアントで再表示する。
+4. ローカルの拘束状態を解除する。
+5. `Networking.LocalPlayer.Immobilize(false)` を実行する。
+
+これにより、拘束時に非表示になった手錠は、救助されたプレイヤーの近くで再利用できます。手錠の再配置は `PlayerManager` が保持する手錠参照を使って行うため、独立した `Teleporter` Behaviourは使用しません。
 
 ### 5.5 懐中電灯
 
-[`FlashLightManager.cs`](../Assets/Package/UdonSharp/Items/FlashLightManager.cs) はVRとDesktopで形を変えます。
+[`FlashLightManager.cs`](../Assets/KeyFinder/UdonSharp/Items/FlashLightManager.cs) はVRとDesktopで形を変えます。
 
 - VR: 通常のPickupとして手に持ち、Pickup UseでON/OFFする。
 - Desktop: PickupとColliderを無効にし、登録されたプレイヤーの頭の前へ毎フレーム追従する。本人が `F` キーを押すとON/OFFする。
@@ -271,7 +276,7 @@ ON/OFFは `TurnOn()` または `TurnOff()` をAllへのNetwork Eventで呼び、
 
 ## 6. 扉、クリア、ゲーム終了
 
-扉内側のTriggerでは、[`DoorManager.OnPlayerTriggerEnter()`](../Assets/Package/UdonSharp/Managers/DoorManager.cs) が呼ばれます。同じプレイヤーの侵入が複数クライアントから重複加算されないよう、`player == Networking.LocalPlayer` のクライアントだけが `playerNum` を更新します。
+扉内側のTriggerでは、[`DoorManager.OnPlayerTriggerEnter()`](../Assets/KeyFinder/UdonSharp/Managers/DoorManager.cs) が呼ばれます。同じプレイヤーの侵入が複数クライアントから重複加算されないよう、`player == Networking.LocalPlayer` のクライアントだけが `playerNum` を更新します。
 
 クリアは、次のどちらかの順番でも成立します。
 
@@ -299,13 +304,13 @@ ON/OFFは `TurnOn()` または `TurnOff()` をAllへのNetwork Eventで呼び、
 ## 8. ソースを読む推奨順
 
 1. [`Switch.cs`](../Assets/UdonSharp/Switch.cs): `Interact` から開始イベントが送られる入口。
-2. [`GameManager.cs`](../Assets/Package/UdonSharp/Managers/GameManager.cs): 参加者、準備完了、開始、タイマー、終了。
-3. [`FieldGenerator.cs`](../Assets/Package/UdonSharp/Fields/FieldGenerator.cs): 配置インデックスの同期と、全クライアントでの配置再現。
-4. [`Item.cs`](../Assets/Package/UdonSharp/Items/Item.cs): Pickupイベントからアイテム固有処理への入口。
-5. [`KeyManager.cs`](../Assets/Package/UdonSharp/Items/KeyManager.cs) と [`DoorManager.cs`](../Assets/Package/UdonSharp/Managers/DoorManager.cs): 鍵から解錠・クリアまで。
-6. [`HandcuffManager.cs`](../Assets/Package/UdonSharp/Items/HandcuffManager.cs)、[`PlayerColliders.cs`](../Assets/Package/UdonSharp/Managers/PlayerColliders.cs)、[`PlayerManager.cs`](../Assets/Package/UdonSharp/Managers/PlayerManager.cs): 対象検出、ID同期、本人側での拘束。
-7. [`InputManager.cs`](../Assets/Package/UdonSharp/Managers/InputManager.cs): Desktop/VRの素手Use入力。
-8. [`FlashLightManager.cs`](../Assets/Package/UdonSharp/Items/FlashLightManager.cs) と [`UIManager.cs`](../Assets/Package/UdonSharp/Managers/UIManager.cs): ローカル追従表示と操作差分。
+2. [`GameManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/GameManager.cs): 参加者、準備完了、開始、タイマー、終了。
+3. [`FieldGenerator.cs`](../Assets/KeyFinder/UdonSharp/Fields/FieldGenerator.cs): 配置インデックスの同期と、全クライアントでの配置再現。
+4. [`Item.cs`](../Assets/KeyFinder/UdonSharp/Items/Item.cs): Pickupイベントからアイテム固有処理への入口。
+5. [`KeyManager.cs`](../Assets/KeyFinder/UdonSharp/Items/KeyManager.cs) と [`DoorManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/DoorManager.cs): 鍵から解錠・クリアまで。
+6. [`HandcuffManager.cs`](../Assets/KeyFinder/UdonSharp/Items/HandcuffManager.cs)、[`PlayerColliders.cs`](../Assets/KeyFinder/UdonSharp/Managers/PlayerColliders.cs)、[`PlayerManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/PlayerManager.cs): 対象検出、ID同期、本人側での拘束と手錠の再配置。
+7. [`InputManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/InputManager.cs): Desktop/VRの素手Use入力。
+8. [`FlashLightManager.cs`](../Assets/KeyFinder/UdonSharp/Items/FlashLightManager.cs) と [`UIManager.cs`](../Assets/KeyFinder/UdonSharp/Managers/UIManager.cs): ローカル追従表示と操作差分。
 
 ## 9. VRChatログインなしで確認できる範囲
 
